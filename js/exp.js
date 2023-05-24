@@ -467,7 +467,7 @@ const exp = (function() {
             type: jsPsychInstructions,
             pages: function () { 
                 let scoreArray = jsPsych.data.get().select('score').values;
-                let totalScore = scoreArray[scoreArray.length - 1] + scoreArray[scoreArray.length - 4];
+                let totalScore = scoreArray[scoreArray.length - 1] + scoreArray[scoreArray.length - 2];
                 return [`<div class='parent'>
                     <p>Spin the Wheel is now complete! You won a total of <strong>${totalScore}</strong> points!</p>
                     <p>To finish this study, please continue to answer a few final questions.</p>
