@@ -6,7 +6,7 @@ const exp = (function() {
     let p = {};
 
     let settings = {
-        nSpins: 5,
+        nSpins: 10,
         effortOrder: ['highEffort_first', 'highEffort_second'][Math.floor(Math.random() * 2)],
         miOrder: ['highMI_first', 'highMI_second'][Math.floor(Math.random() * 2)],
     };
@@ -127,7 +127,7 @@ const exp = (function() {
             correctAnswers.push(`In round ${round}, I must tap my right arrow as fast as possible to build momentum.`);
         } else if (settings.effortOrder == 'highEffort_first' && round == 2 || settings.effortOrder == 'highEffort_second' && round == 1) {
             text.speed1 = "<strong> at a moderate pace</strong>";
-            text.speed2 = "If tap your right arrow either too quickly or too slowly,<br>the wheel will not build enough momentum to spin.";
+            text.speed2 = "If you tap your right arrow either too quickly or too slowly,<br>the wheel will not build enough momentum to spin.";
             correctAnswers.push(`In round ${round}, I must tap my right arrow at a moderate pace to build momentum.`);
         };
 
