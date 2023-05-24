@@ -370,7 +370,7 @@ const exp = (function() {
         ];
         this.randomize_question_order = false;
         this.scale_width = 500;
-        this.data = {round: round};
+        this.data = {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
         this.on_finish =(data) => {
             dmPsych.saveSurveyData(data);
         };
@@ -418,7 +418,7 @@ const exp = (function() {
         ];
         this.randomize_question_order = false;
         this.scale_width = 500;
-        this.data = {round: round};
+        this.data = {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
         this.on_finish = (data) => {
             dmPsych.saveSurveyData(data);
         };
@@ -436,7 +436,7 @@ const exp = (function() {
         ];
         this.randomize_question_order = false;
         this.scale_width = 500;
-        this.data = {round: round};
+        this.data = {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
         this.on_finish = (data) => {
             dmPsych.saveSurveyData(data);      
         };
