@@ -11,7 +11,7 @@ const exp = (function() {
         miOrder: ['highMI_first', 'highMI_second'][Math.floor(Math.random() * 2)],
     };
 
-    console.log(miOrder, effortOrder);
+    console.log(settings.miOrder, settings.effortOrder);
 
     jsPsych.data.addProperties({
         spins_per_wheel: settings.nSpins,
