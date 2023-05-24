@@ -642,8 +642,8 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.intro, exp.practiceWheel_1, exp.practiceWheel_2, exp.postPractice, exp.attnChk1, exp.readyForRound1, exp.wheel_1, 
+const timeline = [exp.consent, exp.intro, exp.practiceWheel_1, exp.practiceWheel_2, exp.postPractice, exp.attnChk1, exp.readyForRound1, exp.wheel_1, 
     exp.round1Complete, exp.attnChk2, exp.readyForRound2, exp.wheel_2, 
-    exp.demographics, exp.save_data, exp.consent];
+    exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);
