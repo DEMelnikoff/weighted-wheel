@@ -628,7 +628,6 @@ const dmPsych = (function() {
           pressTimes.shift();
           spinnerData.pressTimes.push(pressTimes);
           pressTimes = [];
-          console.log(spinnerData.pressTimes);
           window.cancelAnimationFrame(req_spin);
         };
       };
