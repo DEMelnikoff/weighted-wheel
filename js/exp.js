@@ -7,11 +7,19 @@ const exp = (function() {
 
     let settings = {
         nSpins: 10,
-        effortOrder: ['highEffort_first', 'highEffort_second'][Math.floor(Math.random() * 2)],
-        miOrder: ['highMI_first', 'highMI_second'][Math.floor(Math.random() * 2)],
+        effort: ['highEffort', 'lowEffort'][Math.floor(Math.random() * 2)],
+        mi: ['highMI', 'lowMI'][Math.floor(Math.random() * 2)],
     };
 
-    console.log(settings.miOrder, settings.effortOrder);
+    let text = {};
+
+    if (settings.effort == 'highEffort') {
+        text.speed1 = "<strong> as fast as possible</strong>";
+        text.speed2 = "If you do not tap your right arrow as fast as possible,<br>the wheel will not build enough momentum to spin.";
+    } else if (settings.effort == 'lowEffort') {
+        text.speed1 = "<strong> at a moderate pace</strong>";
+        text.speed2 = "If you tap your right arrow either too quickly or too slowly,<br>the wheel will not build enough momentum to spin.";
+    };
 
     jsPsych.data.addProperties({
         spins_per_wheel: settings.nSpins,
@@ -43,9 +51,22 @@ const exp = (function() {
     */
 
     const html = {
-        intro: [
+
+        intro_holeInOne: [`<div class='parent' style='text-align: left'></p>For the next 10 to 15 minutes, you'll be helping us answer the following question:<br>
+            "What makes some games more immersive and engaging than others?"</p>
+
+            <p>Specifically, you'll play two games and provide feedback about each one. 
+            By playing games and providing feedback, you'll help us understand how to design games 
+            that are as immersive and engaging as possible.</p></div>`,
+
+            `<div class='parent'>The first game that you'll play is called Hole in One.</p>
+            <p>To learn about and play Hole in One, continue to the next screen.</p></div>`],
+
+        intro_spinTheWheel: [`<div class='parent'><p>Thank you for playing and evaluating Hole in One!</p>
+            <p>The second and final game that you'll play is called Spin the Wheel.<br>
+            To learn about and play Spin the Wheel, continue to the next screen.</p></div>`,
+
             `<div class='parent'>
-                <p><strong>Welcome to Spin the Wheel!</strong></p>
                 <p>In Spin the Wheel, you'll spin a series of prize wheels.</p>
                 <p>Each time you spin a prize wheel, you'll earn points.
                 <br>The number of points you earn depends on where the wheel lands.</p>
@@ -54,98 +75,46 @@ const exp = (function() {
 
             `<div class='parent'>
                 <p>Spinning a prize wheel is a two-step process.</p>
-                <p>First, you must build momentum by repeatedly tapping the right arrow on your keyboard.</br>
+                <p>First, you must build momentum by repeatedly tapping the right arrow on your keyboard.
+                Specifically, you'll need to tap your right arrow ${text.speed1}.
+                ${text.speed2}</p>
                 Once you build enough momentum, you must press your spacebar to spin the wheel.</p>
                 <p>To practice spinning, continue to the next page.</p>
-            </div>`
-        ],
+            </div>`],
 
         postPractice: [
             `<div class='parent'>
-                <p>Practice is now complete!</p>
-                <p>Soon, you'll play two rounds of Spin the Wheel.</p>
-            </div>`,
-
-            `<div class='parent'>
-                <p>After each round of Spin the Wheel, you'll answer questions about your feelings.</p>
-                <p>Specifically, you'll report how <strong>immersed and engaged</strong> you felt during each round,<br>
-                as well as how much you <strong>enjoyed</strong> each round.</p>
-            </div>`,
-        ],
-
-        postTask: [
-            `<div class='parent'>
-                <p>Spin the Wheel is now complete!</p>
-                <p>To finish this study, please continue to answer a few final questions.</p>
+                <p>Practice is now complete! Soon, you'll play Spin the Wheel.</p>
+                <p>Remember: Your goal is to earn as many points as possible.
+                The amount of points you earn for each spin is equal to the number you land on. 
+                For example, if you land on a 3, you'll get 3 points.</p>
+                <p>You'll find out how many points you earned in total at the end of the game.</p>
             </div>`
         ],
 
-        readyForRound1: [
+        postAttnChk: [
             `<div class='parent'>
-                <p>You're now ready to play Round 1 of Spin the Wheel!</p>
-                <p>When you continue, Round 1 will begin.</p>
-            </div>`
-        ],
-
-        readyForRound2: [
-            `<div class='parent'>
-                <p>You're now ready to play Round 2 of Spin the Wheel!</p>
-                <p>When you continue, Round 2 will begin.</p>
-            </div>`
-        ],
-
-        round1Complete: [
-            `<div class='parent'>
-                <p>Round 1 of Spin the Wheel is now complete!</p>
-                <p>Continue to learn about and play round 2.</p>
+                <p>You're now ready to play Spin the Wheel!</p>
+                <p>When you continue, Spin the Wheel will begin.</p>
             </div>`
         ],
     };
 
-    function MakeAttnChk (settings, round) {
-
-        const instPage_1 = {
-            type: jsPsychInstructions,
-            pages: [`<div class='parent'>
-                <p>Remember: The goal of Spin the Wheel is win as many points as possible.</p>
-                <p>The number of points you earn for each spin is equal to the number you land on.<br>
-                You'll find out how many points you earned in total after both rounds are complete.</p>
-                </div>`],
-            show_clickable_nav: true,
-            post_trial_gap: 500,
-        };
-        
-        let text = {
-            round: round == 1 ? 'first round' : 'second round',
-        };
+    function MakeAttnChk (settings) {
 
         let correctAnswers = [`Earn as many points as possible.`, `5`];
 
-        if (settings.effortOrder == 'highEffort_first' && round == 1 || settings.effortOrder == 'highEffort_second' && round == 2) {
-            text.speed1 = "<strong> as fast as possible</strong>";
-            text.speed2 = "If you do not tap your right arrow as fast as possible,<br>the wheel will not build enough momentum to spin.";
-            correctAnswers.push(`In round ${round}, I must tap my right arrow as fast as possible to build momentum.`);
-        } else if (settings.effortOrder == 'highEffort_first' && round == 2 || settings.effortOrder == 'highEffort_second' && round == 1) {
-            text.speed1 = "<strong> at a moderate pace</strong>";
-            text.speed2 = "If you tap your right arrow either too quickly or too slowly,<br>the wheel will not build enough momentum to spin.";
-            correctAnswers.push(`In round ${round}, I must tap my right arrow at a moderate pace to build momentum.`);
-        };
-
-        const instPage_2 = {
-            type: jsPsychInstructions,
-            pages: [`<div class='parent'>
-                <p>In the ${text.round} of Spin the Wheel,<br>
-                you'll need to tap your right arrow ${text.speed1} in order to build momentum.</p>
-                <p>${text.speed2}</p>
-                </div>`],
-            show_clickable_nav: true,
-            post_trial_gap: 500,
+        if (settings.effort == 'highEffort') {
+            correctAnswers.push(`I must tap my right arrow as fast as possible to build momentum.`);
+        } else if (settings.effort == 'lowEffort') {
+            correctAnswers.push(`I must tap my right arrow at a moderate pace to build momentum.`);
         };
 
         const errorMessage = {
-          type: jsPsychInstructions,
-          pages: [`<div class='parent'><p>You provided the wrong answer.<br>To make sure you understand the game, please continue to re-read the instructions.</p></div>`],
-          show_clickable_nav: true,
+            type: jsPsychInstructions,
+            pages: [`<div class='parent'><p>You provided the wrong answer.<br>To make sure you understand the game, please continue to re-read the instructions.</p></div>`],
+            show_clickable_nav: true,
+            allow_keys: false,
         };
 
         const attnChk = {
@@ -156,18 +125,18 @@ const exp = (function() {
             questions: [
                 {
                     prompt: "What is the goal of Spin the Wheel?", 
-                    name: `attnChk1_${round}`, 
+                    name: `attnChk1`, 
                     options: [`Earn as many points as possible.`, `Spin the wheel as fast as possible.`],
                 },
                 {
                     prompt: "How many points is it worth when the wheel lands on a 5?", 
-                    name: `attnChk2_${round}`, 
+                    name: `attnChk2`, 
                     options: [`0`, `5`, `10`],
                 },
                 {
                     prompt: "Which of the following statements is true?", 
-                    name: `attnChk3_${round}`, 
-                    options: [`In round ${round}, I must tap my right arrow as fast as possible to build momentum.`, `In round ${round}, I must tap my right arrow at a moderate pace to build momentum.`],
+                    name: `attnChk3`, 
+                    options: [`I must tap my right arrow as fast as possible to build momentum.`, `I must tap my right arrow at a moderate pace to build momentum.`],
                 },
             ],
             scale_width: 500,
@@ -186,7 +155,7 @@ const exp = (function() {
         };
 
         const instLoop = {
-          timeline: [instPage_1, instPage_2, attnChk, conditionalNode],
+          timeline: [attnChk, conditionalNode],
           loop_function: () => {
             const fail = jsPsych.data.get().last(2).select('totalErrors').sum() > 0 ? true : false;
             return fail;
@@ -197,31 +166,31 @@ const exp = (function() {
     }
    
 
-    p.practiceWheel_1 = {
+    const practiceWheel_1 = {
         type: jsPsychCanvasButtonResponse,
-        prompt: `<div class='parent'>
-            <p>Repeatedly tap your right arrow to build momentum.</br>
+        prompt: `<div class='parent' style='font-size:16px'>
+            <p>Repeatedly tap your right arrow ${text.speed1} to build momentum.</br>
             Once you build enough momentum, you'll see a "Ready!" message at the center of the wheel.</br>
             This means you can spin the wheel by pressing your spacebar. Once you spin the wheel, you can stop tapping your right arrow.</p>
-            <p>Practice spinning by (1) tapping your right arrow and then (2) pressing your spacebar when the "Ready!" message appears.</p>
+            <p>Practice spinning by (1) tapping your right arrow ${text.speed1} and then<br>(2) pressing your spacebar when the "Ready!" message appears.</p>
             </div>`,
         stimulus: function(c, spinnerData) {
-            dmPsych.spinner(c, spinnerData, [wedges.three, wedges.three, wedges.five, wedges.five], [0, 1], [0], 1);
+            dmPsych.spinner(c, spinnerData, [wedges.three, wedges.three, wedges.five, wedges.five], jsPsych.timelineVariable('targetPressTime'), [0], 1);
         },
         nSpins: 1,
         canvas_size: [500, 500],
         post_trial_gap: 500,
     };
 
-    p.practiceWheel_2 = {
+    const practiceWheel_2 = {
         type: jsPsychCanvasButtonResponse,
-        prompt: `<div class='parent'>
+        prompt: `<div class='parent' style='font-size:16px'>
             <p>Great job! Now, spin the wheel a few more time to get the hang of it. Remember:</p>
-            <p>Spin the wheel by (1) tapping your right arrow and then (2) pressing your spacebar when the "Ready!" message appears.</br>
-            Once you spin the wheel, you can stop tapping your right arrow.</p>
+            <p>Spin the wheel by (1) tapping your right arrow ${text.speed1} and then<br>(2) pressing your spacebar when the "Ready!" message appears.</p>
+            <p>Once you spin the wheel, you can stop tapping your right arrow.</p>
             </div>`,
         stimulus: function(c, spinnerData) {
-            dmPsych.spinner(c, spinnerData, [wedges.three, wedges.three, wedges.five, wedges.five], [0, 1], [0, 0, 0], 3);
+            dmPsych.spinner(c, spinnerData, [wedges.three, wedges.three, wedges.five, wedges.five], jsPsych.timelineVariable('targetPressTime'), [0, 0, 0], 3);
         },
         nSpins: 3,
         canvas_size: [500, 500],
@@ -233,11 +202,25 @@ const exp = (function() {
         cont_btn: "advance",
     };
 
-    p.intro = {
+    p.wheel_practice = {
+        timeline: [practiceWheel_1, practiceWheel_2],
+        timeline_variables: makeTimelineVariables(settings),
+    };
+
+    p.intro_holeInOne = {
         type: jsPsychInstructions,
-        pages: html.intro,
+        pages: html.intro_holeInOne,
         show_clickable_nav: true,
         post_trial_gap: 500,
+        allow_keys: false,
+    };
+
+    p.intro_spinTheWheel = {
+        type: jsPsychInstructions,
+        pages: html.intro_spinTheWheel,
+        show_clickable_nav: true,
+        post_trial_gap: 500,
+        allow_keys: false,
     };
 
     p.postPractice = {
@@ -245,32 +228,19 @@ const exp = (function() {
         pages: html.postPractice,
         show_clickable_nav: true,
         post_trial_gap: 500,
+        allow_keys: false,
     };
 
-    p.readyForRound1 = {
+    p.postAttnChk = {
         type: jsPsychInstructions,
-        pages: html.readyForRound1,
+        pages: html.postAttnChk,
         show_clickable_nav: true,
         post_trial_gap: 500,
+        allow_keys: false,
     };
 
-    p.readyForRound2 = {
-        type: jsPsychInstructions,
-        pages: html.readyForRound2,
-        show_clickable_nav: true,
-        post_trial_gap: 500,
-    };
 
-    p.round1Complete = {
-        type: jsPsychInstructions,
-        pages: html.round1Complete,
-        show_clickable_nav: true,
-        post_trial_gap: 500,
-    };
-
-    p.attnChk1 = new MakeAttnChk(settings, 1);
-
-    p.attnChk2 = new MakeAttnChk(settings, 2);
+    p.attnChk = new MakeAttnChk(settings);
 
     
    /*
@@ -279,19 +249,19 @@ const exp = (function() {
     *
     */
 
-    function makeTimelineVariables(settings, round) {
+    function makeTimelineVariables(settings, game) {
 
         // array indiciating whether or not the outcome of each spin is guaranteed
         let guaranteedOutcome = new Array(settings.nSpins).fill(0);
 
         // set sectors, ev, sd, and mi
         let sectors, ev, sd, mi;
-        if (settings.miOrder == 'highMI_first' && round == 1 || settings.miOrder == 'highMI_second' && round == 2) {
+        if (settings.mi == 'highMI') {
             sectors = [ wedges.two, wedges.four, wedges.seven, wedges.ten ];
             ev = 5.75;
             sd = 3.5;
             mi = 2;
-        } else if (settings.miOrder == 'highMI_first' && round == 2 || settings.miOrder == 'highMI_second' && round == 1) {
+        } else if (settings.mi == 'lowMI') {
             sectors = [ wedges.four, wedges.four, wedges.four, wedges.eleven ];
             ev = 5.75;
             sd = 3.5;
@@ -300,13 +270,13 @@ const exp = (function() {
 
         // set target time between button presses
         let targetPressTime;
-        if (settings.effortOrder == 'highEffort_first' && round == 1 || settings.effortOrder == 'highEffort_second' && round == 2) {
+        if (settings.effort == 'highEffort') {
             targetPressTime = [0, .17];
-        } else if (settings.effortOrder == 'highEffort_first' && round == 2 || settings.effortOrder == 'highEffort_second' && round == 1) {
+        } else if (settings.effort == 'lowEffort') {
             targetPressTime = [.2, .75];
         };
 
-        let timelineVariables = [{round: round, sectors: sectors, mi: mi, ev: ev, sd: sd, targetPressTime: targetPressTime, guaranteedOutcome: guaranteedOutcome}];
+        let timelineVariables = [{game, game, sectors: sectors, mi: mi, ev: ev, sd: sd, targetPressTime: targetPressTime, guaranteedOutcome: guaranteedOutcome}];
 
         return timelineVariables;
     };
@@ -319,7 +289,30 @@ const exp = (function() {
         nSpins: settings.nSpins,
         canvas_size: [500, 500],
         post_trial_gap: 1000,
-        data: {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')},
+        data: {game: jsPsych.timelineVariable('game'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')},
+    };
+
+    const holeInOne = {
+        type: dmPsychHoleInOne,
+        stimulus: dmPsych.holeInOne.run,
+        total_shots: 12,  
+        canvas_size: [475, 900],
+        ball_color: 'white',
+        ball_size: 10,
+        ball_xPos: .13,
+        ball_yPos: .5,
+        wall_width: 75,
+        wall_color: '#797D7F',
+        wall_xPos: .9,
+        hole_size: 75,
+        friction: .02,
+        tension: .01,
+        prompt: `<div class='instructions'>
+
+        <p><strong>Hole in One</strong>. The goal of Hole in One is to shoot the ball through the hole.<br>
+        Follow the instructions in the game area, then play Hole in One. 
+        We'll let you know when time is up.</p></div>`,
+        data: {game: 'holeInOne'}
     };
 
 
@@ -334,35 +327,35 @@ const exp = (function() {
     var zeroToALot = ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8<br>A lot'];
 
     // constructor functions
-    function MakeFlowQs(round) {
+    function MakeFlowQs(game) {
         this.type = jsPsychSurveyLikert;
         this.preamble = `<div style='padding-top: 50px; width: 850px; font-size:16px'>
 
-        <p>Thank you for completing round ${round} of Spin the Wheel!</p>
+        <p>Thank you for completing ${game}!</p>
 
-        <p>During round ${round}, to what extent did you feel immersed and engaged in what you were doing?<br>
+        <p>During ${game}, to what extent did you feel immersed and engaged in what you were doing?<br>
         Report the degree to which you felt immersed and engaged by answering the following questions.</p></div>`;
         this.questions = [
             {
-                prompt: `During round ${round}, to what extent did you feel <strong>absorbed</strong> in what you were doing?`,
+                prompt: `During ${game}, to what extent did you feel <strong>absorbed</strong> in what you were doing?`,
                 name: `absorbed`,
                 labels: zeroToExtremely,
                 required: true,
             },
             {
-                prompt: `During round ${round}, to what extent did you feel <strong>immersed</strong> in what you were doing?`,
+                prompt: `During ${game}, to what extent did you feel <strong>immersed</strong> in what you were doing?`,
                 name: `immersed`,
                 labels: zeroToExtremely,
                 required: true,
             },
             {
-                prompt: `During round ${round}, to what extent did you feel <strong>engaged</strong> in what you were doing?`,
+                prompt: `During ${game}, to what extent did you feel <strong>engaged</strong> in what you were doing?`,
                 name: `engaged`,
                 labels: zeroToExtremely,
                 required: true,
             },
             {
-                prompt: `During round ${round}, to what extent did you feel <strong>engrossed</strong> in what you were doing?`,
+                prompt: `During ${game}, to what extent did you feel <strong>engrossed</strong> in what you were doing?`,
                 name: `engrossed`,
                 labels: zeroToExtremely,
                 required: true,
@@ -370,47 +363,47 @@ const exp = (function() {
         ];
         this.randomize_question_order = false;
         this.scale_width = 500;
-        this.data = {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
+        this.data = {game: game, mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
         this.on_finish =(data) => {
             dmPsych.saveSurveyData(data);
         };
     };
 
-    function MakeEnjoyQs(round) {
+    function MakeEnjoyQs(game) {
         this.type = jsPsychSurveyLikert;
         this.preamble = `<div style='padding-top: 50px; width: 850px; font-size:16px'>
 
-        <p>Below are a few more questions about round ${round} of Spin the Wheel.</p>
+        <p>Below are a few more questions about ${game}.</p>
 
         <p>Instead of asking about immersion and engagement, these questions ask about <strong>enjoyment</strong>.<br>
-        Report how much you <strong>enjoyed</strong> round ${round} by answering the following questions.</p></div>`;
+        Report how much you <strong>enjoyed</strong> ${game} by answering the following questions.</p></div>`;
         this.questions = [
             {
-                prompt: `How much did you <strong>enjoy</strong> playing round ${round}?`,
+                prompt: `How much did you <strong>enjoy</strong> playing ${game}?`,
                 name: `enjoyable`,
                 labels: zeroToALot,
                 required: true,
             },
             {
-                prompt: `How much did you <strong>like</strong> playing round ${round}?`,
+                prompt: `How much did you <strong>like</strong> playing ${game}?`,
                 name: `like`,
                 labels: zeroToALot,
                 required: true,
             },
             {
-                prompt: `How much did you <strong>dislike</strong> playing round ${round}?`,
+                prompt: `How much did you <strong>dislike</strong> playing ${game}?`,
                 name: `dislike`,
                 labels: zeroToALot,
                 required: true,
             },
             {
-                prompt: `How much <strong>fun</strong> did you have playing round ${round}?`,
+                prompt: `How much <strong>fun</strong> did you have playing ${game}?`,
                 name: `fun`,
                 labels: zeroToALot,
                 required: true,
             },
             {
-                prompt: `How <strong>entertaining</strong> was round ${round}?`,
+                prompt: `How <strong>entertaining</strong> was ${game}?`,
                 name: `entertaining`,
                 labels: zeroToExtremely,
                 required: true,
@@ -418,17 +411,17 @@ const exp = (function() {
         ];
         this.randomize_question_order = false;
         this.scale_width = 500;
-        this.data = {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
+        this.data = {game: game, mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
         this.on_finish = (data) => {
             dmPsych.saveSurveyData(data);
         };
     };
 
-    function MakeEffortQs(round) {
+    function MakeEffortQs(game) {
         this.type = jsPsychSurveyLikert;
         this.questions = [
             {
-                prompt: `While playing round ${round} of Spin the Wheel,<br>how much effort did it feel like you were exerting?`,
+                prompt: `While playing ${game},<br>how much effort did it feel like you were exerting?`,
                 name: `effort`,
                 labels: zeroToALot,
                 required: true,
@@ -436,22 +429,20 @@ const exp = (function() {
         ];
         this.randomize_question_order = false;
         this.scale_width = 500;
-        this.data = {round: jsPsych.timelineVariable('round'), mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
+        this.data = {game: game, mi: jsPsych.timelineVariable('mi'), targetPressTime: jsPsych.timelineVariable('targetPressTime'), sectors: jsPsych.timelineVariable('sectors'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd')};
         this.on_finish = (data) => {
             dmPsych.saveSurveyData(data);      
         };
     };
 
     // timeline: first wheel
-    p.wheel_1 = {
-        timeline: [wheel, new MakeFlowQs(1), new MakeEnjoyQs(1), new MakeEffortQs(1)],
-        timeline_variables: makeTimelineVariables(settings, 1),
+    p.spinTheWheel = {
+        timeline: [wheel, new MakeFlowQs("Spin the Wheel"), new MakeEnjoyQs("Spin the Wheel"), new MakeEffortQs("Spin the Wheel")],
+        timeline_variables: makeTimelineVariables(settings, "Spin the Wheel"),
     };
 
-    // timeline: second wheel
-    p.wheel_2 = {
-        timeline: [wheel, new MakeFlowQs(2), new MakeEnjoyQs(2), new MakeEffortQs(2)],
-        timeline_variables: makeTimelineVariables(settings, 2),
+    p.holeInOne = {
+        timeline: [holeInOne, new MakeFlowQs("Hole in One"), new MakeEnjoyQs("Hole in One"), new MakeEffortQs("Hole in One")],
     };
 
    /*
@@ -467,7 +458,7 @@ const exp = (function() {
             type: jsPsychInstructions,
             pages: function () { 
                 let scoreArray = jsPsych.data.get().select('score').values;
-                let totalScore = scoreArray[scoreArray.length - 1] + scoreArray[scoreArray.length - 2];
+                let totalScore = scoreArray[scoreArray.length - 1];
                 return [`<div class='parent'>
                     <p>Spin the Wheel is now complete! You won a total of <strong>${totalScore}</strong> points!</p>
                     <p>To finish this study, please continue to answer a few final questions.</p>
@@ -475,6 +466,7 @@ const exp = (function() {
             },  
             show_clickable_nav: true,
             post_trial_gap: 500,
+            allow_keys: false,
         };
 
         const meanOfEffScale = ['-2<br>Strongly<br>Disagree', '-1<br>Disagree', '0<br>Neither agree<br>nor disagree', '1<br>Agree', '2<br>Strongly<br>Agree'];
@@ -642,8 +634,8 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.consent, exp.intro, exp.practiceWheel_1, exp.practiceWheel_2, exp.postPractice, exp.attnChk1, exp.readyForRound1, exp.wheel_1, 
-    exp.round1Complete, exp.attnChk2, exp.readyForRound2, exp.wheel_2, 
+const timeline = [exp.consent, exp.intro_holeInOne, exp.holeInOne, 
+    exp.intro_spinTheWheel, exp.wheel_practice, exp.postPractice, exp.attnChk, exp.postAttnChk, exp.spinTheWheel, 
     exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);

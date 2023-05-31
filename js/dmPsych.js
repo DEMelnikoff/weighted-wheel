@@ -491,7 +491,7 @@ const dmPsych = (function() {
       };
       if (!isSpinning) {
         timeSinceLastPress = (performance.now() - lastPressTime) / 1000;
-        if (pressTimes[pressTimes.length - 1] > targetPressTime[0] && timeSinceLastPress < targetPressTime[1]) {
+        if (pressTimes[pressTimes.length - 1] > targetPressTime[0] && timeSinceLastPress < targetPressTime[1] || readyToSpin) {
           nSlowDown = 0;
           if (nSpeedUp == 0) { 
             vel = vel_postDecel;
@@ -541,7 +541,7 @@ const dmPsych = (function() {
       currentAngle += vel*dt + .5*accel*(dt**2);
       vel = Math.min(vel_min, vel + accel*dt);
       render(currentAngle);
-      if (Math.abs(vel) == vel_min) {
+      if (Math.abs(vel) == vel_min || readyToSpin) {
         readyToSpin = true;
         pointer.textContent = 'Ready!';
         pointer.style.background = 'grey';
